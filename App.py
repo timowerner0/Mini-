@@ -4,26 +4,27 @@ from openai import OpenAI
 st.set_page_config(page_title="Mini Gamma", page_icon="⚡", layout="centered")
 
 st.title("⚡ Mini Gamma")
-st.write("Digite o prompt, gere os slides e personalize o texto.")
+st.write("Digite o prompt e gere seus slides na hora.")
 
-api_key = st.sidebar.text_input("Chave da API (Groq/OpenAI)", type="password")
+# Campo para digitar a chave na barra lateral do app
+api_key = st.sidebar.text_input("Chave da API (Groq)", type="password")
 
 if not api_key:
-    st.warning("⚠️ Insira sua chave de API na barra lateral para começar.")
+    st.warning("⚠️ Insira sua chave de API da Groq na barra lateral para começar.")
 else:
     client = OpenAI(
         base_url="https://api.groq.com/openai/v1",
         api_key=api_key
     )
 
-    prompt = st.text_area("Sobre o que será a apresentação?", placeholder="Ex: História da IA em 5 slides", height=100)
+    prompt = st.text_area("Sobre o que será a apresentação?", placeholder="Ex: História da Inteligência Artificial em 5 slides", height=100)
     
     if st.button("Gerar Apresentação", type="primary"):
         if prompt:
             with st.spinner("Gerando slides..."):
                 try:
                     response = client.chat.completions.create(
-                        model="llama-3-8b-8192",
+                        model="llama-3.1-8b-instant",
                         messages=[
                             {
                                 "role": "system",
@@ -34,7 +35,7 @@ else:
                     )
                     st.session_state['resultado'] = response.choices[0].message.content
                 except Exception as e:
-                    st.error(f"Erro: {e}")
+                    st.error(f"Erro ao gerar: {e}")
         else:
             st.error("Digite um prompt antes de gerar.")
 
